@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: API de Sistema de Permissionamento
+  version: 1.0.0
+  description: API para gerenciamento de sistemas, grupos, permissões e usuários.
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /sistemas:
+    get:
+      summary: Lista todos os sistemas
+      responses:
+        '200':
+          description: Lista de sistemas
+    post:
+      summary: Cria um novo sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SistemaCreate'
+      responses:
+        '201':
+          description: Sistema criado
+  /sistemas/{id}:
+    get:
+      summary: Obtém um sistema pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sistema encontrado
+        '404':
+          description: Sistema não encontrado
+
+  /usuarios/{idUsuario}/permissoes:
+    get:
+      summary: Lista todas as permissões associadas a um usuário
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de permissões do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissoesUsuarioResponse'
+        '404':
+          description: Usuário não encontrado
+
+components:
+  schemas:
+    SistemaCreate:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+        descricao:
+          type: string
+    PermissoesUsuarioResponse:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        permissoesPorSistema:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                codigo:
+                  type: string
+                descricao:
+                  type: string
